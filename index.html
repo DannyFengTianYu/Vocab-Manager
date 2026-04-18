@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="system">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabulary Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="toast-container" class="toast-container"></div>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-left">
+                <h1>Vocab Manager</h1>
+            </div>
+            <div class="header-right">
+                <div class="theme-switcher">
+                    <label for="theme-select" class="visually-hidden">Theme</label>
+                    <select id="theme-select">
+                        <option value="system">System Default</option>
+                        <option value="light">Light Mode</option>
+                        <option value="dark">Dark Mode</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+
+        <nav class="app-nav">
+            <button class="nav-btn active" data-target="add-view">Add Word</button>
+            <button class="nav-btn" data-target="dict-view">My Dictionary</button>
+            <button class="nav-btn" data-target="review-view">Review</button>
+        </nav>
+
+        <main class="app-content">
+            <!-- Add Word View -->
+            <section id="add-view" class="view-section active">
+                <div id="shared-form-container">
+                    <div class="form-card">
+                        <h2 id="form-title">Add New Word</h2>
+                    <form id="add-word-form">
+                        <div class="input-group">
+                            <label for="word-input">Word</label>
+                            <input type="text" id="word-input" required placeholder="e.g., Ephemeral" autocomplete="off">
+                        </div>
+
+                        <div class="input-group">
+                            <label>Tags</label>
+                            <div id="form-tag-options" class="tag-option-list"></div>
+                            <button type="button" id="form-show-tag-input-btn" class="btn secondary inline-btn">+ New Tag</button>
+                            <div class="tag-create-row">
+                                <input type="text" id="form-new-tag-input" placeholder="Create custom tag..." autocomplete="off">
+                                <button type="button" id="form-add-tag-btn" class="btn secondary inline-btn">Add</button>
+                            </div>
+                        </div>
+                        
+                        <div id="definitions-container">
+                            <!-- Definitions will be injected here -->
+                        </div>
+
+                        <button type="button" id="add-definition-btn" class="btn secondary">
+                            + Add Definition
+                        </button>
+
+                        <div class="form-actions">
+                            <button type="submit" id="save-word-btn" class="btn primary">Save Word</button>
+                            <button type="button" id="cancel-edit-btn" class="btn secondary" style="display: none;">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                </div>
+            </section>
+
+            <!-- Dictionary View -->
+            <section id="dict-view" class="view-section">
+                <div class="dict-header">
+                    <h2>My Dictionary</h2>
+                    <div class="dict-controls">
+                        <div class="search-bar">
+                            <input type="text" id="search-input" placeholder="Search words..." autocomplete="off">
+                        </div>
+                        <div class="sort-controls">
+                            <label for="sort-mode-select" class="visually-hidden">Sort mode</label>
+                            <select id="sort-mode-select" title="Sort mode">
+                                <option value="timestamp">Added Time</option>
+                                <option value="alphabet">Alphabet</option>
+                            </select>
+                            <button type="button" id="sort-order-btn" class="sort-order-btn" title="Toggle sort order" aria-label="Toggle sort order">↓</button>
+                            <button type="button" id="dict-multi-select-btn" class="sort-order-btn dict-multi-select-toggle" title="Multi-select mode" aria-label="Multi-select mode" aria-pressed="false">☐</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="dict-layout">
+                    <aside class="dict-sidebar">
+                        <h3>Tags</h3>
+                        <div id="filter-tag-options" class="tag-option-list"></div>
+                        <button type="button" id="filter-show-tag-input-btn" class="btn secondary inline-btn">+ New Tag</button>
+                        <div class="tag-create-row">
+                            <input type="text" id="filter-new-tag-input" placeholder="" autocomplete="off">
+                            <button type="button" id="filter-add-tag-btn" class="btn secondary inline-btn">Add</button>
+                        </div>
+                    </aside>
+                    <div id="word-list" class="word-list">
+                        <!-- Word cards will be injected here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Review View -->
+            <section id="review-view" class="view-section">
+                <div class="review-container">
+                    <div id="review-setup" class="review-state active">
+                        <h2>Review Settings</h2>
+                        <p id="review-summary-text" class="review-summary">Loading...</p>
+
+                        <div id="review-options" class="review-options hidden">
+                            <div class="input-group">
+                                <label>Review Mode</label>
+                                <div class="review-mode-toggles" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem;">
+                                    <label class="tag-option"><input type="radio" name="review-mode" value="srs" checked> <span>Spaced Repetition (Smart algorithm)</span></label>
+                                    <label class="tag-option"><input type="radio" name="review-mode" value="random"> <span>Random Cram (Any words, won't affect memory data)</span></label>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label>Tags to Review</label>
+                                <div class="review-tag-toggles" style="margin-bottom: 0.5rem;">
+                                    <label class="tag-option"><input type="checkbox" id="review-tag-all" checked> <span>All Tags</span></label>
+                                </div>
+                                <div id="review-tag-options" class="tag-option-list compact-tag-options" style="display: none; max-height: 160px; overflow-y: auto;"></div>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="review-limit-input">Number of Words to Review</label>
+                                <input type="number" id="review-limit-input" min="1" max="9999" value="20">
+                            </div>
+                        </div>
+
+                        <button type="button" id="start-review-btn" class="btn primary btn-large">Start Review</button>
+                    </div>
+
+                    <div id="review-card" class="review-state flashcard">
+                        <div class="review-card-header">
+                            <div class="review-progress-info">
+                                <span id="review-progress-text" class="review-progress-text">1 / 1</span>
+                                <div class="review-progress-bar-track">
+                                    <div id="review-progress-bar" class="review-progress-bar-fill"></div>
+                                </div>
+                            </div>
+                            <button type="button" id="exit-review-btn" class="btn-icon exit-review-btn" title="Exit review">✕</button>
+                        </div>
+                        <div class="flashcard-front">
+                            <h2 id="review-word-display" class="review-word">Word</h2>
+                        </div>
+                        <div class="flashcard-actions front-actions">
+                            <button type="button" id="show-answer-btn" class="btn primary btn-large">Show Answer</button>
+                        </div>
+
+                        <div id="flashcard-back" class="flashcard-back hidden">
+                            <div class="divider"></div>
+                            <div id="review-definitions" class="review-definitions">
+                                <!-- Definitions injected here -->
+                            </div>
+                            <div class="flashcard-actions back-actions">
+                                <button type="button" class="btn btn-large grade-btn grade-forgot" data-grade="0">Forgot<br/><small>遗忘</small></button>
+                                <button type="button" class="btn btn-large grade-btn grade-blurry" data-grade="3">Blurry<br/><small>模糊</small></button>
+                                <button type="button" class="btn btn-large grade-btn grade-recognize" data-grade="5">Recognize<br/><small>认识</small></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="review-done" class="review-state">
+                        <h2>All Done!</h2>
+                        <p>You have reviewed all the due words for now.</p>
+                        <button type="button" id="review-home-btn" class="btn secondary">Back to Setup</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="dict-bulk-bar" class="dict-bulk-bar hidden" aria-live="polite" aria-hidden="true">
+        <div class="dict-bulk-bar-inner">
+            <div class="dict-bulk-bar-row dict-bulk-bar-row-top">
+                <span id="dict-bulk-count" class="dict-bulk-count">0 selected</span>
+                <select id="dict-bulk-tag-select" class="dict-bulk-tag-select" title="Pick a tag" aria-label="Tag">
+                    <option value="">— Pick tag —</option>
+                </select>
+                <button type="button" id="dict-bulk-cancel-btn" class="btn secondary dict-bulk-cancel-btn">Cancel</button>
+            </div>
+            <div class="dict-bulk-bar-row dict-bulk-bar-row-actions">
+                <button type="button" id="dict-bulk-copy-btn" class="btn secondary dict-bulk-primary-action">Copy</button>
+                <button type="button" id="dict-bulk-move-btn" class="btn secondary dict-bulk-primary-action">Move</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HTML Template for a Definition Block -->
+    <template id="def-template">
+        <div class="definition-block">
+            <div class="def-header">
+                <span class="def-title">Definition</span>
+                <button type="button" class="btn-icon remove-def" title="Remove definition">✕</button>
+            </div>
+            <div class="def-input-group">
+                <select class="def-pos" title="Part of speech">
+                    <option value="">-</option>
+                    <option value="n.">n.</option>
+                    <option value="v.">v.</option>
+                    <option value="adj.">adj.</option>
+                    <option value="adv.">adv.</option>
+                    <option value="pron.">pron.</option>
+                    <option value="prep.">prep.</option>
+                    <option value="conj.">conj.</option>
+                </select>
+                <textarea class="def-input" rows="1" placeholder="Enter meaning..."></textarea>
+            </div>
+            
+            <div class="examples-container"></div>
+            
+            <button type="button" class="btn text-btn add-example-btn">+ Add Example</button>
+        </div>
+    </template>
+
+    <!-- HTML Template for an Example Block -->
+    <template id="example-template">
+        <div class="example-block">
+            <textarea class="example-input" rows="1" placeholder="Enter example sentence..."></textarea>
+            <button type="button" class="btn-icon remove-example" title="Remove example">✕</button>
+        </div>
+    </template>
+
+    <script src="app.js"></script>
+</body>
+</html>
