@@ -61,6 +61,13 @@ To solve this, **Vocab Manager** was created. It is a custom web application tha
 - `server.py`: A lightweight Python backend that serves static files and handles JSON API requests (`/api/vocab`, `/api/custom-tags`).
 - `vocab.db`: SQLite database generated on the first run to store words, tags, and review progress.
 
+### 🗺️ Future Plans
+
+1. **Smarter Review Algorithm**: Continuously improve the recommendation algorithm for more personalized spaced repetition.
+2. **Enhanced UI/UX**: Overhaul the frontend interface for a more beautiful and interactive user experience.
+3. **User Account System**: Implement multi-user support where each account's data is completely isolated.
+4. **Data Import/Export**: Add features to easily import vocabulary from other platforms and export personal data.
+
 ---
 
 ## 中文
@@ -119,3 +126,10 @@ To solve this, **Vocab Manager** was created. It is a custom web application tha
 - `app.js`: 前端逻辑，处理 UI 交互、API 调用和本地状态。
 - `server.py`: 一个轻量级的 Python 后端，用于提供静态文件并处理 JSON API 请求 (`/api/vocab`, `/api/custom-tags`)。
 - `vocab.db`: 首次运行时生成的 SQLite 数据库，用于存储单词、标签和复习进度。
+
+### 🗺️ 未来计划
+
+1. **更智能化的复习推荐算法**：不断优化间隔重复算法，提供更个性化的复习计划。
+2. **更美观的前端界面和更好交互体验**：全面升级 UI，提升用户的沉浸感与操作流畅度。
+3. **账号系统**：支持多用户注册登录，确保各账号的数据相互独立。
+4. **单词导出导入系统**：方便用户导入外部词库，以及导出个人学习数据。
