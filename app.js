@@ -323,7 +323,7 @@ function renderTagOptions(container, tags, selectedSet, inputName, counts = {}, 
             deleteBtn.className = 'tag-delete-btn';
             deleteBtn.setAttribute('data-tag-delete', tag);
             deleteBtn.title = `Delete tag "${tag}"`;
-            deleteBtn.textContent = 'x';
+            deleteBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 14px; margin: 0;">delete</span>';
         }
         if (showRename && !isRenaming) {
             renameBtn = document.createElement('button');
@@ -331,7 +331,7 @@ function renderTagOptions(container, tags, selectedSet, inputName, counts = {}, 
             renameBtn.className = 'tag-rename-btn';
             renameBtn.setAttribute('data-tag-rename', tag);
             renameBtn.title = `Rename tag "${tag}"`;
-            renameBtn.textContent = 'e';
+            renameBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 14px; margin: 0;">edit</span>';
         }
         if (showDelete && isRenaming) {
             deleteBtn = null;
@@ -1706,3 +1706,36 @@ if (exitReviewBtn) {
     });
 }
 
+// --- MD3 Ripple Effect ---
+document.addEventListener('mousedown', function (e) {
+    const target = e.target.closest('.btn, .nav-btn, .word-card, .tag-pill-btn, .sort-order-btn');
+    if (!target) return;
+
+    if (!target.classList.contains('ripple-surface')) {
+        target.classList.add('ripple-surface');
+    }
+
+    const circle = document.createElement('span');
+    const diameter = Math.max(target.clientWidth, target.clientHeight);
+    const radius = diameter / 2;
+
+    const rect = target.getBoundingClientRect();
+    
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${e.clientX - rect.left - radius}px`;
+    circle.style.top = `${e.clientY - rect.top - radius}px`;
+    circle.classList.add('ripple');
+
+    const existingRipple = target.querySelector('.ripple');
+    if (existingRipple) {
+        existingRipple.remove();
+    }
+
+    target.appendChild(circle);
+    
+    setTimeout(() => {
+        if (circle.parentNode) {
+            circle.remove();
+        }
+    }, 600);
+});
